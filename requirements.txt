@@ -4,3 +4,7 @@ python-dotenv
 firebase-admin
 pydantic
 google-genai
+pytest
+pytest-asyncio
+pytest-mock
+httpx
