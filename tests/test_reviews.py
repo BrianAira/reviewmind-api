@@ -34,3 +34,38 @@ async def test_create_review_rejects_invalid_payload(client, authenticated_user)
     response = await client.post("/api/v1/reviews/", json=payload)
 
     assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_get_reviews_filtered_by_urgency_alta(
+    client,
+    authenticated_user,
+    mock_firestore_reviews,
+):
+    response = await client.get("/api/v1/reviews/?urgency=ALTA")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 1
+    assert all(review["urgency"] == "ALTA" for review in body)
+
+
+@pytest.mark.asyncio
+async def test_get_reviews_invalid_urgency_value(client, authenticated_user):
+    response = await client.get("/api/v1/reviews/?urgency=CRITICA")
+
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_get_reviews_without_urgency_filter(
+    client,
+    authenticated_user,
+    mock_firestore_reviews,
+):
+    response = await client.get("/api/v1/reviews/")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 3
+    assert {review["id"] for review in body} == {"1", "2", "3"}
