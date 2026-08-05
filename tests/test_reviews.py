@@ -39,6 +39,7 @@ async def test_create_review_rejects_invalid_payload(client, authenticated_user)
 @pytest.mark.asyncio
 async def test_get_reviews_filtered_by_urgency_alta(
     client,
+    mock_firebase,
     authenticated_user,
     mock_firestore_reviews,
 ):
@@ -60,6 +61,7 @@ async def test_get_reviews_invalid_urgency_value(client, authenticated_user):
 @pytest.mark.asyncio
 async def test_get_reviews_without_urgency_filter(
     client,
+    mock_firebase,
     authenticated_user,
     mock_firestore_reviews,
 ):
