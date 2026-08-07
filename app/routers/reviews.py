@@ -66,3 +66,25 @@ async def create_review(review: ReviewRequest, current_user=Depends(get_current_
 
     saved_review = await save_review(review_data)
     return ReviewResponse(**saved_review)
+
+
+@router.post("/test-notification")
+async def test_notification():
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "http://notification-service:8001/notify",
+                json={"recipient": "reviewmind@example.com", "message": "Test notification from ReviewMind-API"},
+                timeout=3.0,
+            )
+            response.raise_for_status()
+            return {
+                "status": "ok",
+                "notification_service_response": response.json(),
+            }
+    except httpx.TimeoutException as exc:
+        raise HTTPException(status_code=502, detail="Notification service timeout") from exc
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(status_code=502, detail=f"Notification service error: {exc.response.text}") from exc
+    except httpx.RequestError as exc:
+        raise HTTPException(status_code=502, detail="Unable to reach notification service") from exc
