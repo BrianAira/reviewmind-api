@@ -66,3 +66,25 @@ async def mock_gemini_analysis(monkeypatch: pytest.MonkeyPatch):
 
     monkeypatch.setattr(reviews_module, "analyze_review_text", fake_analyze)
     yield
+
+
+@pytest_asyncio.fixture
+async def mock_firestore_reviews(monkeypatch: pytest.MonkeyPatch):
+    import app.routers.reviews as reviews_module
+
+    sample_reviews = [
+        {"id": "1", "userId": "test-user-123", "urgency": "ALTA"},
+        {"id": "2", "userId": "test-user-123", "urgency": "BAJA"},
+        {"id": "3", "userId": "test-user-123", "urgency": "MEDIA"},
+    ]
+
+    async def fake_get_reviews_by_user(user_id: str):
+        return [review for review in sample_reviews if review["userId"] == user_id]
+
+    monkeypatch.setattr(
+        reviews_module,
+        "get_reviews_by_user",
+        fake_get_reviews_by_user,
+        raising=False,
+    )
+    yield

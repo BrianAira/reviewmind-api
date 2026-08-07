@@ -37,3 +37,11 @@ async def save_review(review_data: dict) -> dict:
     await document_ref.set(review_data)
     saved_snapshot = await document_ref.get()
     return {"id": document_ref.id, **saved_snapshot.to_dict()}
+
+
+async def get_reviews_by_user(user_id: str) -> list[dict]:
+    client = get_firestore_client()
+    collection = client.collection("reviews")
+    query = collection.where("userId", "==", user_id)
+    documents = await query.get()
+    return [{"id": doc.id, **doc.to_dict()} for doc in documents]
