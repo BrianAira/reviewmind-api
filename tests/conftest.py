@@ -70,6 +70,10 @@ async def mock_gemini_analysis(monkeypatch: pytest.MonkeyPatch):
 
 @pytest_asyncio.fixture
 async def mock_firestore_reviews(monkeypatch: pytest.MonkeyPatch):
+    """
+    Mockea la función de lectura de reseñas por usuario en Firestore.
+    Se usa por los tests del listado de reseñas.
+    """
     import app.routers.reviews as reviews_module
 
     sample_reviews = [

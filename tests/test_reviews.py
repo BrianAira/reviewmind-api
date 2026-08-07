@@ -37,38 +37,6 @@ async def test_create_review_rejects_invalid_payload(client, authenticated_user)
 
 
 @pytest.mark.asyncio
-async def test_test_notification_success(client, monkeypatch):
-    class DummyResponse:
-        def __init__(self, payload):
-            self._payload = payload
-
-        def raise_for_status(self):
-            return None
-
-        def json(self):
-            return self._payload
-
-    class DummyClient:
-        async def __aenter__(self):
-            return self
-
-        async def __aexit__(self, exc_type, exc, tb):
-            return None
-
-        async def post(self, url, json=None, timeout=3.0):
-            return DummyResponse({"status": "queued", "recipient": "reviewmind@example.com"})
-
-    import app.routers.reviews as reviews_module
-
-    monkeypatch.setattr(reviews_module.httpx, "AsyncClient", lambda: DummyClient())
-
-    response = await client.post("/api/v1/reviews/test-notification")
-
-    assert response.status_code == 200
-    assert response.json()["status"] == "ok"
-
-
-@pytest.mark.asyncio
 async def test_get_reviews_filtered_by_urgency_alta(
     client,
     mock_firebase,

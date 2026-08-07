@@ -42,3 +42,32 @@ Escenario: Rechazo de solicitudes sin autenticación válida
   Cuando la solicitud no incluye un token de Firebase Auth válido
   Entonces el backend debe responder con un estado `401 Unauthorized`
   Y debe incluir un mensaje que indique que la autenticación es requerida.
+
+## Historia de Usuario 3: Filtrado de Reseñas por Nivel de Urgencia
+
+Como Product Owner técnico,
+quiero que el endpoint GET `/api/v1/reviews/` permita filtrar las reseñas del usuario autenticado por nivel de urgencia,
+para que pueda visualizar de forma rápida y precisa únicamente las reseñas que requieren atención según su prioridad.
+
+### Criterios de Aceptación
+
+Escenario: Filtrado exitoso de reseñas por urgencia
+  Dado que un usuario autenticado solicita el listado de reseñas mediante `GET /api/v1/reviews/`
+  Cuando envía un query parameter `urgency` con uno de los valores permitidos: `BAJA`, `MEDIA` o `ALTA`
+  Entonces el backend debe devolver únicamente las reseñas del usuario autenticado que coincidan con ese nivel de urgencia
+  Y debe responder con un estado `200 OK`
+  Y debe incluir en la respuesta solo las reseñas que cumplan el filtro.
+
+Escenario: Valor de urgencia inválido
+  Dado que un usuario autenticado solicita el listado de reseñas mediante `GET /api/v1/reviews/`
+  Cuando envía un query parameter `urgency` con un valor distinto de `BAJA`, `MEDIA` o `ALTA`
+  Entonces el backend debe rechazar la solicitud
+  Y debe responder con un estado `422 Unprocessable Entity`
+  Y debe indicar que el valor de urgencia proporcionado es inválido.
+
+Escenario: Sin filtro de urgencia
+  Dado que un usuario autenticado solicita el listado de reseñas mediante `GET /api/v1/reviews/`
+  Cuando no envía el query parameter `urgency`
+  Entonces el backend debe devolver todas las reseñas del usuario autenticado
+  Y debe responder con un estado `200 OK`
+  Y debe incluir el conjunto completo de reseñas sin aplicar ningún filtro.
